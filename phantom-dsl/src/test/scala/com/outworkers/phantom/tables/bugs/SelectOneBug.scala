@@ -15,4 +15,24 @@
  */
 package com.outworkers.phantom.tables.bugs
 
-case class SchemaBug656Model(id: Int, name: String)
+import com.outworkers.phantom.dsl._
+
+import scala.concurrent.Future
+
+case class User(
+  id: Int,
+  firstName: String,
+  lastName: String,
+  dateOfBirth: LocalDate
+)
+
+abstract class UserSchema extends Table[UserSchema, User] {
+  override def tableName: String = "users"
+
+  object id extends IntColumn with PartitionKey
+  object firstName extends StringColumn
+  object lastName extends StringColumn
+  object dateOfBirth extends LocalDateColumn
+
+  def getUserId: Future[Option[Int]] = new SelectOps(this.select(_.id)).one()
+}
